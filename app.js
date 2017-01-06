@@ -41,16 +41,21 @@ game.view = {
     this.appendCollection(this.grid, visualizedCards);
   },
 
-  appendCollection: function(target, collection) {
-    // TODO
+  appendCollection: function($target, collection) {
+    collection.forEach(function($el){
+      $target.append($el);
+    })
   },
 
   _visualizeCard: function(card, index, cards) {
-    var $container, $card, gridSize;
+    var $container, $card, gridSize, containerSize;
     gridSize = Math.sqrt(cards.length);
+    containerSize = game.view.grid.width() / gridSize;
     $container = $("<div>").addClass("card-container");
-    $container.height(game.view.grid.height() / gridSize);
-    $container.width(game.view.grid.width() / gridSize);
+    $container.css({
+      height: containerSize,
+      width: containerSize
+    });
     $card = $("<div>").addClass("card");
     $container.append($card);
     return $container;
