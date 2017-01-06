@@ -1,0 +1,13 @@
+#grid {
+  width: 500px;
+  display: flex;
+  flex-wrap: wrap;
+
+  .card-container {
+    padding: 5px;
+  }
+
+  .card {
+    background: red;
+  }
+}

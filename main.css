@@ -1,0 +1,10 @@
+#grid {
+  width: 500px;
+  display: flex;
+  flex-wrap: wrap; }
+  #grid .card-container {
+    padding: 5px; }
+  #grid .card {
+    background: red; }
+
+/*# sourceMappingURL=main.css.map */
