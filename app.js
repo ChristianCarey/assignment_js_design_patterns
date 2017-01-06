@@ -15,11 +15,19 @@ game.controller = {
     return game.view.getGridInput();
   },
 
+  cardClicked: function(e) {
+    $card = $(e.target);
+    game.card.toggleFlipped($card.id);
+  },
+
   setGrid: function(e){
     e.preventDefault();
     var cards;
 
     cards = game.card.newCards(Math.pow(game.controller.getGridInput(), 2));
+
+console.log(cards);
+
     game.view.renderGrid(cards);
   }
 
@@ -29,7 +37,7 @@ game.view = {
 
   init: function(){
     this.grid = $("#grid");
-    this._attachEventHandlers;
+    this._attachEventHandlers();
   },
 
   getGridInput: function() {
@@ -49,7 +57,7 @@ game.view = {
 
   _visualizeCard: function(card, index, cards) {
     var $container, $card, gridSize, containerSize;
-    gridSize = Math.sqrt(cards.length);
+    gridSize = Math.sqrt(cards);
     containerSize = game.view.grid.width() / gridSize;
     $container = $("<div>").addClass("card-container");
     $container.css({
@@ -64,7 +72,7 @@ game.view = {
 
   _attachEventHandlers: function(){
     $("#grid-size-form").submit(game.controller.setGrid);
-    this.grid.on("click", "card", game.controller.clickCard);
+    this.grid.on("click", "card", game.controller.cardClicked);
   }
 }
 
@@ -74,7 +82,29 @@ game.card = {
 
   count: 0,
 
-  cards: [],
+  cards: {},
+
+  cardObjects: function() {
+    var ids = Object.keys(this.cards);
+    var cardObjects = new Array(ids.length);
+    ids.forEach(function(id, index){
+      cardObjects[index] = game.card.cards[id];
+    });
+    return cardObjects;
+  },
+
+  newCards: function(number) {
+    for(var count = 0; count < number / 2; count++) {
+      this._new(this.count, count, this.back);
+      this._new(this.count, count, this.back);
+    }
+    return this.cardObjects();
+  },
+
+  toggleFlipped: function(id) {
+    var card = cards[id];
+    card.flipped = !card.flipped;
+  },
 
   _constructor: function Card(id, front, back) {
     this.id = id;
@@ -85,18 +115,10 @@ game.card = {
 
   _new: function(id, front, back) {
     var card;
-    this._constructor(id, front, back);
+    card = new this._constructor(id, front, back);
     this.count++;
-    this.cards.push(card)
+    this.cards[card.id] = card;
     return card;
-  },
-
-  newCards: function(number) {
-    for(var count = 0; count < number / 2; count++) {
-      this._new(this.count, count, this.back);
-      this._new(this.count, count, this.back);
-    }
-    return this.cards;
   }
 
 }
