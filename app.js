@@ -1,3 +1,4 @@
+'use strict';
 
 var game = {
   play: function(){
@@ -8,7 +9,7 @@ var game = {
 game.controller = {
 
   init: function() {
-    game.view.init();
+    game.view.init(this);
   },
 
   getGridInput: function() {
@@ -16,8 +17,9 @@ game.controller = {
   },
 
   cardClicked: function(e) {
-    $card = $(e.target);
-    game.card.toggleFlipped($card.id);
+    var $card = $(e.target); 
+    game.card.toggleFlipped($card.attr('id'));
+    game.view.flipCard($card);
   },
 
   setGrid: function(e){
@@ -25,9 +27,6 @@ game.controller = {
     var cards;
 
     cards = game.card.newCards(Math.pow(game.controller.getGridInput(), 2));
-
-console.log(cards);
-
     game.view.renderGrid(cards);
   }
 
@@ -35,9 +34,9 @@ console.log(cards);
 
 game.view = {
 
-  init: function(){
+  init: function(controller){
     this.grid = $("#grid");
-    this._attachEventHandlers();
+    this._attachEventHandlers(controller);
   },
 
   getGridInput: function() {
@@ -45,7 +44,7 @@ game.view = {
   },
 
   renderGrid: function(cards){
-    visualizedCards = cards.map(this._visualizeCard);
+    var visualizedCards = cards.map(this._visualizeCard);
     this.appendCollection(this.grid, visualizedCards);
   },
 
@@ -53,6 +52,17 @@ game.view = {
     collection.forEach(function($el){
       $target.append($el);
     })
+  },
+
+  flipCard: function($card){
+    var card = game.card.find($card.attr('id'));
+    if (card.flipped) {
+      var $front = $('<div class="front">').text(card.front);
+      $card.html($front);
+    } else {
+      $card.html("");
+    }
+    $card.toggleClass("flipped");
   },
 
   _visualizeCard: function(card, index, cards) {
@@ -70,15 +80,13 @@ game.view = {
     return $container;
   },
 
-  _attachEventHandlers: function(){
-    $("#grid-size-form").submit(game.controller.setGrid);
-    this.grid.on("click", "card", game.controller.cardClicked);
+  _attachEventHandlers: function(controller){
+    $("#grid-size-form").submit(controller.setGrid);
+    this.grid.on("click", ".card", controller.cardClicked);
   }
 }
 
 game.card = {
-
-  back: "http://tinyurl.com/hk5d763",
 
   count: 0,
 
@@ -95,27 +103,30 @@ game.card = {
 
   newCards: function(number) {
     for(var count = 0; count < number / 2; count++) {
-      this._new(this.count, count, this.back);
-      this._new(this.count, count, this.back);
+      this._new(this.count, count);
+      this._new(this.count, count);
     }
     return this.cardObjects();
   },
 
   toggleFlipped: function(id) {
-    var card = cards[id];
+    var card = this.find(id);
     card.flipped = !card.flipped;
   },
 
-  _constructor: function Card(id, front, back) {
+  find: function(id) {
+    return this.cards[id];
+  },
+
+  _constructor: function Card(id, front) {
     this.id = id;
     this.front = front;
-    this.back = back;
     this.flipped = false;
   },
 
-  _new: function(id, front, back) {
+  _new: function(id, front) {
     var card;
-    card = new this._constructor(id, front, back);
+    card = new this._constructor(id, front);
     this.count++;
     this.cards[card.id] = card;
     return card;
