@@ -57,7 +57,7 @@ game.view = {
 
   _visualizeCard: function(card, index, cards) {
     var $container, $card, gridSize, containerSize;
-    gridSize = Math.sqrt(cards);
+    gridSize = Math.sqrt(cards.length);
     containerSize = game.view.grid.width() / gridSize;
     $container = $("<div>").addClass("card-container");
     $container.css({
@@ -65,7 +65,7 @@ game.view = {
       width: containerSize
     });
     $card = $("<div>").addClass("card");
-    $card.addId(card.id);
+    $card.attr("id", card.id); // TODO
     $container.append($card);
     return $container;
   },
