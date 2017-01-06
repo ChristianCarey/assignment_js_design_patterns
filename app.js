@@ -29,7 +29,7 @@ game.view = {
 
   init: function(){
     this.grid = $("#grid");
-    $("#grid-size-form").submit(game.controller.setGrid);
+    this._attachEventHandlers;
   },
 
   getGridInput: function() {
@@ -57,8 +57,14 @@ game.view = {
       width: containerSize
     });
     $card = $("<div>").addClass("card");
+    $card.addId(card.id);
     $container.append($card);
     return $container;
+  },
+
+  _attachEventHandlers: function(){
+    $("#grid-size-form").submit(game.controller.setGrid);
+    this.grid.on("click", "card", game.controller.clickCard);
   }
 }
 
